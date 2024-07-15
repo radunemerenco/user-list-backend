@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { User } from '../models/User';
 import { v4 as uuidv4 } from 'uuid';
+import { paginate } from '../middleware/pagination';
 
 const router = Router();
 
@@ -18,13 +19,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
-  try {
-    const users = await User.findAll();
-    res.status(200).send(users);
-  } catch (error) {
-    res.status(500).send({ error: 'Failed to fetch users' });
-  }
+router.get('/', paginate(User), (req, res) => {
+  res.status(200).json(res.paginatedResults);
 });
 
 router.delete('/:id', async (req, res) => {
